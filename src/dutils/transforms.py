@@ -1,7 +1,7 @@
 import random
 
 import numpy as np
-from skimage.filters import gaussian
+# from skimage.filters import gaussian
 import torch
 from PIL import Image, ImageFilter
 
@@ -44,9 +44,9 @@ class FlipChannels(object):
         return Image.fromarray(img.astype(np.uint8))
 
 
-class RandomGaussianBlur(object):
-    def __call__(self, img):
-        sigma = 0.15 + random.random() * 1.15
-        blurred_img = gaussian(np.array(img), sigma=sigma, multichannel=True)
-        blurred_img *= 255
-        return Image.fromarray(blurred_img.astype(np.uint8))
+# class RandomGaussianBlur(object):
+#     def __call__(self, img):
+#         sigma = 0.15 + random.random() * 1.15
+#         blurred_img = gaussian(np.array(img), sigma=sigma, multichannel=True)
+#         blurred_img *= 255
+#         return Image.fromarray(blurred_img.astype(np.uint8))
