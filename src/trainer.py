@@ -42,8 +42,8 @@ class Trainer(object):
                 loss.backward()
                 self.optim.step()
 
-                if i == 1:
-                    print('training is starting')
+                if epoch == 0 and i == 1:
+                    print('training is starting on {}'.format(self.device))
 
             seconds = time.time() - train_start_time
             elapsed = str(timedelta(seconds=seconds))
