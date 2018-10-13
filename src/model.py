@@ -50,10 +50,10 @@ class two_conv(nn.Module):
         super(two_conv, self).__init__()
         self.main = nn.Sequential(
                 nn.Conv2d(in_ch, out_ch, 3),
-                nn.BatchNorm2d(out_ch),
+                # nn.BatchNorm2d(out_ch),
                 nn.ReLU(True),
                 nn.Conv2d(out_ch, out_ch, 3),
-                nn.BatchNorm2d(out_ch),
+                # nn.BatchNorm2d(out_ch),
                 nn.ReLU(True),
                 )
 
@@ -90,7 +90,7 @@ class decode(nn.Module):
 
 class UNet(nn.Module):
     def __init__(self):
-        super(Unet, self).__init__()
+        super(UNet, self).__init__()
         self.encode1 = encode(3, 64)
         self.encode2 = encode(64, 128)
         self.encode3 = encode(128, 256)

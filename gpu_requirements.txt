@@ -1,1 +1,5 @@
-tensorflow-gpu
+torch
+torchvision
+numpy
+pillow
+scikit-image

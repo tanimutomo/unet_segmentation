@@ -1,3 +1,6 @@
+#!/Users/tanimu/.pyenv/shims/python
+# encoding=utf8
+
 import os
 
 import numpy as np
@@ -5,6 +8,8 @@ import scipy.io as sio
 import torch
 from PIL import Image
 from torch.utils import data
+
+from src.utils import crop_to_square
 
 num_classes = 21
 ignore_label = 255
@@ -47,7 +52,7 @@ def make_dataset(mode, root):
         img_path = os.path.join(root, 'VOCdevkit', 'VOC2012', 'JPEGImages')
         mask_path = os.path.join(root, 'VOCdevkit', 'VOC2012', 'SegmentationClass')
         data_list = [l.strip('\n') for l in open(os.path.join(
-            root, 'VOCdevkit', 'VOC2012', 'ImageSets', 'Segmentation', 'seg11valid.txt')).readlines()]
+            root, 'VOCdevkit', 'VOC2012', 'ImageSets', 'Segmentation', 'seg11valid.txt'), encoding='utf-8').readlines()]
         for it in data_list:
             item = (os.path.join(img_path, it + '.jpg'), os.path.join(mask_path, it + '.png'))
             items.append(item)
@@ -61,11 +66,12 @@ def make_dataset(mode, root):
 
 
 class VOC(data.Dataset):
-    def __init__(self, mode, root, joint_transform=None, sliding_crop=None, transform=None, target_transform=None):
+    def __init__(self, mode, root, init_size, joint_transform=None, sliding_crop=None, transform=None, target_transform=None):
         self.imgs = make_dataset(mode, root)
         if len(self.imgs) == 0:
             raise RuntimeError('Found 0 images, please check the data set')
         self.mode = mode
+        self.init_size = init_size
         self.joint_transform = joint_transform
         self.sliding_crop = sliding_crop
         self.transform = transform
@@ -86,6 +92,11 @@ class VOC(data.Dataset):
             mask = Image.fromarray(mask.astype(np.uint8))
         else:
             mask = Image.open(mask_path)
+
+        # my implementation
+        img, mask = crop_to_square(img), crop_to_square(mask)
+        img = img.resize((self.init_size), Image.ANTIALIAS)
+        mask = mask.resize((self.init_size)) # default is NEAREST
 
         if self.joint_transform is not None:
             img, mask = self.joint_transform(img, mask)
