@@ -53,10 +53,7 @@ class Trainer(object):
                         epoch=epoch+1,
                         time=elapsed, loss=loss.item()))
 
-        if os.path.exists('./model'):
-            pass
-        else:
-            os.mkdir('./model')
-        torch.save(self.model.state_dict(), './src/model/u_net_{}.pth'.format(self.save_name))
+            if (epoch + 1) % 20 == 0:
+                torch.save(self.model.state_dict(), './model/u_net_{}.pth'.format(self.save_name))
 
 
