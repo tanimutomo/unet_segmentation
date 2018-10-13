@@ -1,3 +1,5 @@
+import numpy as np
+import torch
 import torch.nn as nn
 
 def init_weights(m):
@@ -11,3 +13,6 @@ def crop_to_square(image):
     right, bottom = (image.width + size) // 2, (image.height + size) // 2
     return image.crop((left, upper, right, bottom))
     
+class MaskToTensor(object):
+    def __call__(self, img):
+        return torch.from_numpy(np.array(img, dtype=np.int32)).long()

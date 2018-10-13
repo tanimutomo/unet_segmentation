@@ -7,11 +7,11 @@ import torchvision.transforms.functional as F
 
 from PIL import Image
 
-from src.dutils import transforms as extended_transforms
-from src.dutils import check_mkdir, evaluate, AverageMeter, CrossEntropyLoss2d
-from src.dutils import transforms as extended_transforms
+# from src.dutils import transforms as extended_transforms
+# from src.dutils import check_mkdir, evaluate, AverageMeter, CrossEntropyLoss2d
 
 from src.dataset import VOC
+from src.utils import MaskToTensor
 
 def get_loader(root, batch_size, init_size):
     mean_std = ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -20,7 +20,8 @@ def get_loader(root, batch_size, init_size):
         standard_transforms.ToTensor(),
         standard_transforms.Normalize(*mean_std)
     ])
-    target_transform = extended_transforms.MaskToTensor()
+    target_transform = MaskToTensor()
+    # target_transform = extended_transforms.MaskToTensor()
     # restore_transform = standard_transforms.Compose([
     #     extended_transforms.DeNormalize(*mean_std),
     #     standard_transforms.ToPILImage(),

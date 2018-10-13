@@ -10,10 +10,6 @@ import torchvision.transforms as standard_transforms
 import torchvision.utils as vutils
 import torchvision.transforms.functional as F
 
-from src.dutils import transforms as extended_transforms
-from src.dutils import check_mkdir, evaluate, AverageMeter, CrossEntropyLoss2d
-from src.dutils import transforms as extended_transforms
-
 import numpy as np
 from src.dataset import VOC
 from src.loader import get_loader
@@ -22,9 +18,9 @@ from src.model import UNet
 from src.utils import *
 
 conf = {
-        'epochs': 3,
+        'epochs': 300,
         'bs': 4,
-        'lr': 1e-3,
+        'lr': 1e-5,
         'momentum': 0.9,
         'root': './data/VOC/',
         'save_name': 0,

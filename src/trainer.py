@@ -24,20 +24,14 @@ class Trainer(object):
         self.epochs = conf['epochs']
         self.save_name = conf['save_name']
 
-        # self.timestamp_s = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
-        # self.epochs = 0
-        # self.iteration = 0
-        # self.max_iter = max_iter
-
     def train(self):
         self.model.apply(init_weights)
         self.model.train()
-        iters = 10000
         for epoch in range(self.epochs):
+            train_start_time = time.time()
             for i, (input, target) in enumerate(self.train_loader):
                 input = input.to(self.device)
                 target = target.to(self.device, dtype=torch.float32)
-                train_start_time = time.time()
                 self.optim.zero_grad()
                 output = self.model(input)
                 target = F.upsample(torch.unsqueeze(target, 0), output.size()[2:], mode='nearest')
@@ -48,18 +42,21 @@ class Trainer(object):
                 loss.backward()
                 self.optim.step()
 
-                seconds = time.time() - train_start_time
-                elapsed = str(timedelta(seconds=seconds))
-                print('Iteration : [{iter}/{iters}]\t'
-                        'Time : {time}\t'
-                        'Loss : {loss:.4f}\t'.format(
-                            iter=i+1, iters=iters,
-                            time=elapsed, loss=loss.item()))
+                if i == 1:
+                    print('training is starting')
 
-        if os.path.exists('./src/model'):
+            seconds = time.time() - train_start_time
+            elapsed = str(timedelta(seconds=seconds))
+            print('Epoch : {epoch}\t'
+                    'Time : {time}\t'
+                    'Loss : {loss:.4f}\t'.format(
+                        epoch=epoch+1,
+                        time=elapsed, loss=loss.item()))
+
+        if os.path.exists('./model'):
             pass
         else:
-            os.mkdir('./src/model')
+            os.mkdir('./model')
         torch.save(self.model.state_dict(), './src/model/u_net_{}.pth'.format(self.save_name))
 
 
