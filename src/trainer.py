@@ -19,7 +19,7 @@ from src.loader import visualize, restore_transform
 
 class Trainer(object):
 
-    def __init__(self, device, model, criterion, optim, train_loader, val_loader, params, experiment):
+    def __init__(self, device, model, criterion, optim, train_loader, val_loader, params, experiment=None):
         self.device = device
         self.model = model.to(self.device)
         self.criterion = criterion
@@ -47,7 +47,9 @@ class Trainer(object):
                     # 'mean_iu': mean_iu,
                     # 'fwavacc': fwavacc
                     }
-            self.experiment.log_multiple_metrics(metrics, step=epoch)
+
+            if self.experiment is not None:
+                self.experiment.log_multiple_metrics(metrics, step=epoch)
 
             self.report(metrics, epoch)
 
@@ -60,12 +62,19 @@ class Trainer(object):
             inputs = inputs.to(self.device)
             targets = targets.to(self.device, dtype=torch.float32)
             self.optim.zero_grad()
-            output = self.model(inputs)
-            targets = F.upsample(torch.unsqueeze(targets, 0), output.size()[2:], mode='nearest')
+            outputs = self.model(inputs)
+
+            # experiment for calcurate accuracy and visualize outputs
+            print(targets.shape, type(targets), targets.dtype)
+            out = outputs.clone().detach().cpu()
+            print(out.shape, type(out), out.dtype)
+            print(torch.min(out))
+            print(torch.max(out))
+
+            targets = F.upsample(torch.unsqueeze(targets, 0), outputs.size()[2:], mode='nearest')
             targets = torch.squeeze(targets, 0).to(torch.int64)
             # print(output.shape, output.dtype)
-            # print(targets.shape, targets.dtype)
-            loss = self.criterion(output, targets)
+            loss = self.criterion(outputs, targets)
             loss.backward()
             self.optim.step()
 
