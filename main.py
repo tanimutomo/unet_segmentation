@@ -49,5 +49,5 @@ if os.path.exists('./image') == 0:
     os.mkdir('./image')
 
 trainer = Trainer(device, model, criterion, optim, train_loader, val_loader, hyper_params)
-trainer.learn()
+trainer.iteration()
 
