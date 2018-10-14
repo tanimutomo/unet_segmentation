@@ -24,14 +24,14 @@ experiment = Experiment(api_key="xK18bJy5xiPuPf9Dptr43ZuMk",
         project_name="U-Net_VOC", workspace="tanimutomo")
 
 hyper_params = {
-        'epochs': 700,
+        'epochs': 1000,
         'bs': 4,
-        'lr': 1e-3,
+        'lr': 1e-2,
         'momentum': 0.9,
         'init_size': (256, 256),
         'bn': True,
         'visualize': True,
-        'save_name': 1,
+        'save_name': 2,
         'num_classes': 21
         }
 experiment.log_multiple_params(hyper_params)
