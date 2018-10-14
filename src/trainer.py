@@ -88,7 +88,7 @@ class Trainer(object):
             gts = gts.to(self.device, dtype=torch.float32)
 
             outputs = self.model(inputs)
-            predictions = outputs.data.max(1)[1].squeeze_(1).squeeze_(0).cpu().numpy()
+            predictions = outputs[0].data.max(1)[1].squeeze_(1).squeeze_(0).cpu().numpy()
             # print(predictions.shape, gts.shape)
             # print(torch.min(gts))
             # print(torch.max(torch.where(gts>=255, torch.zeros(gts.shape), gts)))
@@ -100,10 +100,8 @@ class Trainer(object):
             if random.random() > 0.1:
                 inputs_all.append(None)
             else:
-                print(inputs.shape, type(inputs), inputs.dtype)
-                inputs_all.append(inputs.data.squeeze_(0).cpu())
-                print(inputs.shape, type(inputs), inputs.dtype)
-            gts_all.append(gts.data.squeeze_(0).cpu().numpy())
+                inputs_all.append(inputs[0].data.squeeze_(0).cpu())
+            gts_all.append(gts[0].data.squeeze_(0).cpu().numpy())
             predictions_all.append(predictions)
 
         acc, acc_cls, mean_iu, fwavacc = evaluate(predictions_all, gts_all, self.num_classes)
