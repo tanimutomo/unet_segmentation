@@ -104,6 +104,10 @@ class Trainer(object):
             gts_all.append(gts[0].data.squeeze_(0).cpu().numpy())
             predictions_all.append(predictions)
 
+            print(inputs_all[0].shape, inputs_all[0].dtype)
+            print(gts_all[0].shape, gts_all[0].dtype)
+            print(predictions_all[0].shape, predictions_all[0].dtype)
+
         acc, acc_cls, mean_iu, fwavacc = evaluate(predictions_all, gts_all, self.num_classes)
 
         if self.visualize and epoch % 20 == 0:
