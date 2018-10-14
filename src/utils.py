@@ -3,17 +3,6 @@ import torch
 import torch.nn as nn
 from torchvision import transforms
 
-visualize = transforms.Compose([
-    transforms.Resize(400),
-    transforms.CenterCrop(400),
-    transforms.ToTensor()
-])
-
-restore_transform = standard_transforms.Compose([
-    extended_transforms.DeNormalize(*mean_std),
-    standard_transforms.ToPILImage(),
-])
-
 
 def init_weights(m):
     if type(m) == nn.Conv2d or type(m) == nn.ConvTranspose2d:
@@ -40,6 +29,15 @@ class MaskToTensor(object):
     def __call__(self, img):
         return torch.from_numpy(np.array(img, dtype=np.int32)).long()
 
+class DeNormalize(object):
+    def __init__(self, mean, std):
+        self.mean = mean
+        self.std = std
+
+    def __call__(self, tensor):
+        for t, m, s in zip(tensor, self.mean, self.std):
+            t.mul_(s).add_(m)
+        return tensor
 
 def _fast_hist(label_pred, label_true, num_classes):
     mask = (label_true >= 0) & (label_true < num_classes)

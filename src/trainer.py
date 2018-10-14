@@ -12,7 +12,9 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 
 from src.model import UNet
-from src.utils import visualize, restore_transform, init_weights, evaluate, AverageMeter, colorize_mask
+from src.utils import init_weights, evaluate, AverageMeter, colorize_mask, DeNormalize
+from src.loader import visualize, restore_transform
+
 
 
 class Trainer(object):
