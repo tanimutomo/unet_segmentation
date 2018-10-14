@@ -9,6 +9,12 @@ visualize = transforms.Compose([
     transforms.ToTensor()
 ])
 
+restore_transform = standard_transforms.Compose([
+    extended_transforms.DeNormalize(*mean_std),
+    standard_transforms.ToPILImage(),
+])
+
+
 def init_weights(m):
     if type(m) == nn.Conv2d or type(m) == nn.ConvTranspose2d:
         nn.init.kaiming_normal_(m.weight, a=0, mode='fan_in', nonlinearity='relu')

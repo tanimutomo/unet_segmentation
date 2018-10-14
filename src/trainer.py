@@ -12,7 +12,7 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 
 from src.model import UNet
-from src.utils import visualize, init_weights, evaluate, AverageMeter, colorize_mask
+from src.utils import visualize, restore_transform, init_weights, evaluate, AverageMeter, colorize_mask
 
 
 class Trainer(object):
@@ -109,7 +109,7 @@ class Trainer(object):
             for i, data in enumerate(zip(inputs_all, gts_all, predictions_all)):
                 if data[0] is None:
                     continue
-                input_pil = restore(data[0])
+                input_pil = restore_transform(data[0])
                 gt_pil = colorize_mask(data[1])
                 predictions_pil = colorize_mask(data[2])
                 if train_args['val_save_to_img_file']:
