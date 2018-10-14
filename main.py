@@ -48,6 +48,6 @@ if os.path.exists('./model') == 0:
 if os.path.exists('./image') == 0:
     os.mkdir('./image')
 
-trainer = Trainer(device, model, criterion, optim, train_loader, val_loader, hyper_params)
+trainer = Trainer(device, model, criterion, optim, train_loader, val_loader, hyper_params, experiment)
 trainer.iteration()
 

@@ -19,7 +19,7 @@ from src.loader import visualize, restore_transform
 
 class Trainer(object):
 
-    def __init__(self, device, model, criterion, optim, train_loader, val_loader, params):
+    def __init__(self, device, model, criterion, optim, train_loader, val_loader, params, experiment):
         self.device = device
         self.model = model.to(self.device)
         self.criterion = criterion
@@ -30,7 +30,7 @@ class Trainer(object):
         self.save_name = params['save_name']
         self.num_classes = params['num_classes']
         self.visualize = params['visualize']
-
+        self.experiment = experiment
 
     def iteration(self):
         self.model.apply(init_weights)
@@ -47,7 +47,7 @@ class Trainer(object):
                     # 'mean_iu': mean_iu,
                     # 'fwavacc': fwavacc
                     }
-            experiment.log_multiple_metrics(metrics, step=epoch)
+            self.experiment.log_multiple_metrics(metrics, step=epoch)
 
             self.report(metrics, epoch)
 
