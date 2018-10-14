@@ -97,20 +97,17 @@ class Trainer(object):
             gts = torch.squeeze(gts, 0).to(torch.int64)
             val_loss.update(self.criterion(outputs, gts).item(), N)
 
-            if random.random() > 0.1:
-                inputs_all.append(None)
-            else:
-                inputs_all.append(inputs[0].data.squeeze_(0).cpu())
+            # if random.random() > 0.1:
+            #     inputs_all.append(None)
+            # else:
+            #     inputs_all.append(inputs[0].data.squeeze_(0).cpu())
+            inputs_all.append(inputs[0].data.squeeze_(0).cpu())
             gts_all.append(gts[0].data.squeeze_(0).cpu().numpy())
             predictions_all.append(predictions)
 
-            while(True):
-                try:
-                    print(inputs_all[0].shape, inputs_all[0].dtype)
-                except:
-                    continue
-                print(gts_all[0].shape, gts_all[0].dtype)
-                print(predictions_all[0].shape, predictions_all[0].dtype)
+            print(inputs_all[0].shape, inputs_all[0].dtype)
+            print(gts_all[0].shape, gts_all[0].dtype)
+            print(predictions_all[0].shape, predictions_all[0].dtype)
 
         acc, acc_cls, mean_iu, fwavacc = evaluate(predictions_all, gts_all, self.num_classes)
 
