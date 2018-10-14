@@ -21,20 +21,10 @@ def get_loader(root, batch_size, init_size):
         standard_transforms.Normalize(*mean_std)
     ])
     target_transform = MaskToTensor()
-    # target_transform = extended_transforms.MaskToTensor()
-    # restore_transform = standard_transforms.Compose([
-    #     extended_transforms.DeNormalize(*mean_std),
-    #     standard_transforms.ToPILImage(),
-    # ])
-    # visualize = standard_transforms.Compose([
-    #     standard_transforms.Resize(400),
-    #     standard_transforms.CenterCrop(400),
-    #     standard_transforms.ToTensor()
-    # ])
 
     train_set = VOC('train', root, init_size, transform=input_transform, target_transform=target_transform)
-    train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=4, shuffle=True)
+    train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=0, shuffle=True)
     val_set = VOC('val', root, init_size, transform=input_transform, target_transform=target_transform)
-    val_loader = DataLoader(val_set, batch_size=batch_size, num_workers=4, shuffle=False)
+    val_loader = DataLoader(val_set, batch_size=batch_size, num_workers=0, shuffle=False)
 
     return train_loader, val_loader

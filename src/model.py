@@ -2,104 +2,18 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
-# class maxpool(nn.Module):
-#     def __init__(self):
-#         super(maxpool, self).__init__()
-#         self.main = nn.MaxPool2d(2, 2)
-# 
-#     def forward(self, input):
-#         out = self.main(input)
-#         return out
-
-
-# class upconv(nn.Module):
-#     def __init__(self, in_ch):
-#         super(maxpool, self).__init__()
-#         self.main = nn.ConvTranspose2d(in_ch, in_ch / 2, 2, 2)
-#     
-#     def forward(self, input):
-#         out = self.main(input)
-#         return out
-
-
-# class last_conv(nn.Module):
-#     def __init__(self, in_ch, out_ch):
-#         super(last_conv, self).__init__()
-# 
-#     def forward(self, input):
-#         out = self.main(input)
-#         return out
-
-# def concat(input, skip):
-#     assert input.shape[2] == input.shape[3], 'Not match w and h of input size.'
-#     in_s = input.shape[2]
-#     sk_s = skip.shape[2]
-#     cr_sta = int(sk_s/2 - in_s/2)
-#     cr_end = int(sk_s/2 + in_s/2)
-#     cropped = skip[:, :, cr_sta:cr_end, cr_sta:cr_end]
-#     out = torch.cat((input, cropped), 1)
-#     return out
-
-def concat(input, skip):
-    out = torch.cat([input, F.upsample(skip, input.size()[2:], mode='bilinear')], 1)
-    return out
-
-class two_conv(nn.Module):
-    def __init__(self, in_ch, out_ch):
-        super(two_conv, self).__init__()
-        self.main = nn.Sequential(
-                nn.Conv2d(in_ch, out_ch, 3),
-                # nn.BatchNorm2d(out_ch),
-                nn.ReLU(True),
-                nn.Conv2d(out_ch, out_ch, 3),
-                # nn.BatchNorm2d(out_ch),
-                nn.ReLU(True),
-                )
-
-    def forward(self, input):
-        out = self.main(input)
-        return out
-
-
-class encode(nn.Module):
-    def __init__(self, in_ch, out_ch):
-        super(encode, self).__init__()
-        self.conv = two_conv(in_ch, out_ch)
-        self.maxpool = nn.MaxPool2d(2, 2)
-
-    def forward(self, input):
-        out_conv = self.conv(input)
-        out = self.maxpool(out_conv)
-        return out, out_conv
-
-
-class decode(nn.Module):
-    def __init__(self, in_ch, out_ch):
-        super(decode, self).__init__()
-        self.upconv = nn.ConvTranspose2d(in_ch, int(in_ch/2), 2, 2)
-        self.conv = two_conv(in_ch, out_ch)
-
-    def forward(self, input, skip):
-        out = self.upconv(input)
-        out = concat(out, skip)
-        out = self.conv(out)
-
-        return out
-
-
 class UNet(nn.Module):
-    def __init__(self):
+    def __init__(self, bn):
         super(UNet, self).__init__()
-        self.encode1 = encode(3, 64)
-        self.encode2 = encode(64, 128)
-        self.encode3 = encode(128, 256)
-        self.encode4 = encode(256, 512)
-        self.two_conv = two_conv(512, 1024)
-        self.decode1 = decode(1024, 512)
-        self.decode2 = decode(512, 256)
-        self.decode3 = decode(256, 128)
-        self.decode4 = decode(128, 64)
+        self.encode1 = encode(3, 64, bn)
+        self.encode2 = encode(64, 128, bn)
+        self.encode3 = encode(128, 256, bn)
+        self.encode4 = encode(256, 512, bn)
+        self.two_conv = two_conv(512, 1024, bn)
+        self.decode1 = decode(1024, 512, bn)
+        self.decode2 = decode(512, 256, bn)
+        self.decode3 = decode(256, 128, bn)
+        self.decode4 = decode(128, 64, bn)
         self.conv = nn.Conv2d(64, 21, 1)
 
     def forward(self, input):
@@ -117,4 +31,79 @@ class UNet(nn.Module):
         # print('out: {}'.format(out.shape))
         
         return out
+
+
+class encode(nn.Module):
+    def __init__(self, in_ch, out_ch, bn):
+        super(encode, self).__init__()
+        self.conv = two_conv(in_ch, out_ch, bn)
+        self.maxpool = nn.MaxPool2d(2, 2)
+
+    def forward(self, input):
+        out_conv = self.conv(input)
+        out = self.maxpool(out_conv)
+        return out, out_conv
+
+
+class decode(nn.Module):
+    def __init__(self, in_ch, out_ch, bn):
+        super(decode, self).__init__()
+        self.upconv = nn.ConvTranspose2d(in_ch, int(in_ch/2), 2, 2)
+        self.conv = two_conv(in_ch, out_ch, bn)
+
+    def forward(self, input, skip):
+        out = self.upconv(input)
+        out = concat(out, skip)
+        out = self.conv(out)
+
+        return out
+
+
+class two_conv(nn.Module):
+    def __init__(self, in_ch, out_ch, bn):
+        super(two_conv, self).__init__()
+        self.bn = bn
+        self.main_bn = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3),
+                nn.BatchNorm2d(out_ch),
+                nn.ReLU(True),
+                nn.Conv2d(out_ch, out_ch, 3),
+                nn.BatchNorm2d(out_ch),
+                nn.ReLU(True),
+                )
+
+        self.main = nn.Sequential(
+                nn.Conv2d(in_ch, out_ch, 3),
+                nn.ReLU(True),
+                nn.Conv2d(out_ch, out_ch, 3),
+                nn.ReLU(True),
+                )
+
+
+    def forward(self, input):
+        if self.bn:
+            out = self.main_bn(input)
+        else:
+            out = self.main(input)
+        return out
+
+
+def concat(input, skip):
+    out = torch.cat([input, F.upsample(skip, input.size()[2:], mode='bilinear')], 1)
+    return out
+
+
+# def concat(input, skip):
+#     assert input.shape[2] == input.shape[3], 'Not match w and h of input size.'
+#     in_s = input.shape[2]
+#     sk_s = skip.shape[2]
+#     cr_sta = int(sk_s/2 - in_s/2)
+#     cr_end = int(sk_s/2 + in_s/2)
+#     cropped = skip[:, :, cr_sta:cr_end, cr_sta:cr_end]
+#     out = torch.cat((input, cropped), 1)
+#     return out
+
+
+
+
 
