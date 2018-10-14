@@ -84,7 +84,7 @@ class Trainer(object):
 
         for i, (inputs, gts) in enumerate(self.val_loader):
             N = inputs.size(0)
-            inputs = inputs.to(self.device)
+            inputs = inputs.to(self.device).detach()
             gts = gts.to(self.device, dtype=torch.float32)
 
             outputs = self.model(inputs)
