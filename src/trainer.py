@@ -111,7 +111,7 @@ class Trainer(object):
             for i, data in enumerate(zip(inputs_all, gts_all, predictions_all)):
                 if data[0] is None:
                     continue
-                print(data[0])
+                print(data[0].shape, type(data[0]), data[0].dtype)
                 input_pil = restore_transform(data[0])
                 gt_pil = colorize_mask(data[1])
                 predictions_pil = colorize_mask(data[2])
