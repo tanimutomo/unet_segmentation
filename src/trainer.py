@@ -135,8 +135,9 @@ class Trainer(object):
 
 
     def report(self, metrics, epoch):
-        print('[epoch %d], [train loss %.5f], [val loss %.5f], [acc %.5f], [acc_cls %.5f], [mean_iu %.5f], [fwavacc %.5f]' % (
-            epoch, i + 1, metrics[0], metrics[1], metrics[2], metrics[3], metrics[4], metrics[5]))
+        # print('[epoch %d], [train loss %.5f], [val loss %.5f], [acc %.5f], [acc_cls %.5f], [mean_iu %.5f], [fwavacc %.5f]' % (
+        #     epoch, i + 1, metrics[0], metrics[1], metrics[2], metrics[3], metrics[4], metrics[5]))
+        print('[epoch %d], [train loss %.5f], [val loss %.5f]' % (epoch, metrics[0], metrics[1]))
 
         if epoch % 20 == 0:
             torch.save(self.model.state_dict(), './model/u_net_{}.pth'.format(self.save_name))
