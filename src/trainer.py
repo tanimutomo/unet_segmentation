@@ -84,7 +84,7 @@ class Trainer(object):
 
         for i, (inputs, gts) in enumerate(self.val_loader):
             N = inputs.size(0)
-            inputs = inputs.to(self.device).detach()
+            inputs = inputs.to(self.device)
             gts = gts.to(self.device, dtype=torch.float32)
 
             outputs = self.model(inputs)
@@ -100,7 +100,9 @@ class Trainer(object):
             if random.random() > 0.1:
                 inputs_all.append(None)
             else:
+                print(inputs.shape, type(inputs), inputs.dtype)
                 inputs_all.append(inputs.data.squeeze_(0).cpu())
+                print(inputs.shape, type(inputs), inputs.dtype)
             gts_all.append(gts.data.squeeze_(0).cpu().numpy())
             predictions_all.append(predictions)
 
@@ -112,13 +114,13 @@ class Trainer(object):
                 if data[0] is None:
                     continue
                 print(data[0].shape, type(data[0]), data[0].dtype)
-                input_pil = restore_transform(data[0])
+                input_pil = restore_transform(data[0].detach())
                 gt_pil = colorize_mask(data[1])
                 predictions_pil = colorize_mask(data[2])
-                if train_args['val_save_to_img_file']:
-                    input_pil.save('./image/{}/e_{}/{}_input.png'.format(self.save_name, epoch, i))
-                    predictions_pil.save('./image/{}/e_{}/{}_prediction.png'.format(self.save_name, epoch, i))
-                    gt_pil.save('./image/{}/e_{}/{}_gt.png'.format(self.save_name, epoch, i))
+
+                input_pil.save('./image/{}/e_{}/{}_input.png'.format(self.save_name, epoch, i))
+                predictions_pil.save('./image/{}/e_{}/{}_prediction.png'.format(self.save_name, epoch, i))
+                gt_pil.save('./image/{}/e_{}/{}_gt.png'.format(self.save_name, epoch, i))
                 val_visual.extend([visualize(input_pil.convert('RGB')), visualize(gt_pil.convert('RGB')),
                                    visualize(predictions_pil.convert('RGB'))])
             val_visual = torch.stack(val_visual, 0)
