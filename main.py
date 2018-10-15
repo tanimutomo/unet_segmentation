@@ -24,6 +24,9 @@ from src.utils import *
 
 parser = argparse.ArgumentParser(description='Params')
 parser.add_argument('--cml', action='store_true')
+parser.add_argument('--epochs', type=int, default=1000)
+parser.add_argument('--lr', type=float, default=1e-3)
+parser.add_argument('--save_name', type=int, default=100)
 args = parser.parse_args()
 
 if args.cml:
@@ -33,14 +36,14 @@ else:
     experiment = None
 
 hyper_params = {
-        'epochs': 1000,
+        'epochs': args.epochs,
         'bs': 4,
-        'lr': 1e-2,
+        'lr': args.lr,
         'momentum': 0.9,
         'init_size': (256, 256),
         'bn': True,
         'visualize': True,
-        'save_name': 2,
+        'save_name': args.save_name,
         'num_classes': 21,
         }
 
