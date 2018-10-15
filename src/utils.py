@@ -64,7 +64,7 @@ def evaluate(preds, gts, num_cls):
     acc_cls = torch.mean(acc_cls.float())
     mean_iu = torch.mean(iu.float())
 
-    return acc, acc_cls, mean_iu
+    return acc.item(), acc_cls.item(), mean_iu.item()
 
 
 class AverageMeter:
