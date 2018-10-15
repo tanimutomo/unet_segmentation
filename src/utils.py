@@ -50,7 +50,7 @@ def make_confmat(preds, gts, num_cls):
 
 def evaluate(preds, gts, num_cls):
     confmat = make_confmat(preds, gts, num_cls)
-    acc = torch.diag(confmat).sum() / torch.sum(confmat)
+    acc = torch.sum(torch.diag(confmat)) / torch.sum(confmat)
     acc_cls, iu = 0, 0
     for i in range(num_cls):
         correct = torch.diag(confmat)[i]
