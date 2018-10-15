@@ -49,7 +49,7 @@ if params['cml']:
 else:
     experiment = None
 
-if args.cml:
+if params['cml']:
     experiment.log_multiple_params(params)
 
 data_root = './data/VOC'
