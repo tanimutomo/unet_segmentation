@@ -40,7 +40,7 @@ params = {
         'visualize': True,
         'save_name': 3,
         'num_classes': 21,
-        'cml': True
+        'cml': False
         }
 
 if params['cml']:
