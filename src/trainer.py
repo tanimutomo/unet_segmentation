@@ -132,5 +132,5 @@ class Trainer(object):
             epoch, metrics['train_loss'], metrics['val_loss'], metrics['acc'], metrics['acc_cls'], metrics['mean_iu']))
         print('[epoch %d]\t[train loss %.5f]\t[val loss %.5f]' % (epoch, metrics['train_loss'], metrics['val_loss']))
 
-        if epoch % 20 == 0 and epoch == (self.epochs - 1):
+        if epoch % 20 == 0 or epoch == (self.epochs - 1):
             torch.save(self.model.state_dict(), './model/u_net_{}.pth'.format(self.save_name))
