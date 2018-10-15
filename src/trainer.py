@@ -104,7 +104,7 @@ class Trainer(object):
             gts = F.upsample(torch.unsqueeze(gts, 0), outputs.size()[2:], mode='nearest')
             gts = torch.squeeze(gts, 0).to(torch.int64)
             val_loss.update(self.criterion(outputs, gts).item(), N)
-            acc, acc_cls, mean_iu = evaluate(preds, gts, self.num_classes)
+            acc, acc_cls, mean_iu = evaluate(preds.detach(), gts.detach(), self.num_classes)
 
         return val_loss, acc, acc_cls, mean_iu
 
