@@ -65,11 +65,11 @@ class Trainer(object):
             outputs = self.model(inputs)
 
             # experiment for calcurate accuracy and visualize outputs
-            print(targets.shape, type(targets), targets.dtype)
-            out = outputs.clone().detach().cpu()
-            print(out.shape, type(out), out.dtype)
-            print(torch.min(out))
-            print(torch.max(out))
+            # print(targets.shape, type(targets), targets.dtype)
+            # out = outputs.clone().detach().cpu()
+            # print(out.shape, type(out), out.dtype)
+            # print(torch.min(out))
+            # print(torch.max(out))
 
             targets = F.upsample(torch.unsqueeze(targets, 0), outputs.size()[2:], mode='nearest')
             targets = torch.squeeze(targets, 0).to(torch.int64)
