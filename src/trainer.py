@@ -134,3 +134,4 @@ class Trainer(object):
 
         if epoch % 20 == 0 or epoch == (self.epochs - 1):
             torch.save(self.model.state_dict(), './model/u_net_{}.pth'.format(self.save_name))
+            print('model saved')
