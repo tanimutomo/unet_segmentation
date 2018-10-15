@@ -37,7 +37,7 @@ class Trainer(object):
         for epoch in range(self.epochs):
             train_loss = self.train(epoch)
             # val_loss, acc, acc_cls, mean_iu, fwavacc = self.validate(epoch)
-            val_loss = self.validate(epoch)
+            val_loss, acc, acc_cls, mean_iu = self.validate(epoch)
 
             metrics = {
                     'train_loss': train_loss.avg,
