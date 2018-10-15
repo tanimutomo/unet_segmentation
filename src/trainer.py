@@ -42,9 +42,9 @@ class Trainer(object):
             metrics = {
                     'train_loss': train_loss.avg,
                     'val_loss': val_loss.avg,
-                    'acc': acc,
-                    'acc_cls': acc_cls,
-                    'mean_iu': mean_iu
+                    'acc': acc.avg,
+                    'acc_cls': acc_cls.avg,
+                    'mean_iu': mean_iu.avg
                     # 'fwavacc': fwavacc
                     }
 
@@ -83,6 +83,9 @@ class Trainer(object):
         self.model.eval()
 
         val_loss = AverageMeter()
+        acc = AverageMeter()
+        acc_cls = AverageMeter()
+        mean_iu = AverageMeter()
         # inputs_all, gts_all, predictions_all = [], [], []
 
         for i, (inputs, gts) in enumerate(self.val_loader):
@@ -95,7 +98,10 @@ class Trainer(object):
             gts = F.upsample(torch.unsqueeze(gts, 0), outputs.size()[2:], mode='nearest')
             gts = torch.squeeze(gts, 0).to(torch.int64)
             val_loss.update(self.criterion(outputs, gts).item(), N)
-            acc, acc_cls, mean_iu = evaluate(preds.detach(), gts.detach(), self.num_classes)
+            evaluation = evaluate(preds.detach(), gts.detach(), self.num_classes)
+            acc.update(evaluation[0])
+            acc_cls.update(evaluation[1])
+            mean_iu.update(evaluation[2])
 
         return val_loss, acc, acc_cls, mean_iu
 
