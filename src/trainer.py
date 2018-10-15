@@ -42,8 +42,8 @@ class Trainer(object):
             metrics = {
                     'train_loss': train_loss.avg,
                     'val_loss': val_loss.avg,
-                    'accuracy': acc,
-                    'accuracy_class': acc_cls,
+                    'acc': acc,
+                    'acc_cls': acc_cls,
                     'mean_iu': mean_iu
                     # 'fwavacc': fwavacc
                     }
