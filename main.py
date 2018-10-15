@@ -31,7 +31,7 @@ from src.utils import *
 
 
 params = {
-        'epochs': 3000,
+        'epochs': 300,
         'bs': 4,
         'lr': 1e-3,
         'momentum': 0.9,

@@ -51,18 +51,18 @@ def make_confmat(preds, gts, num_cls):
 def evaluate(preds, gts, num_cls):
     confmat = make_confmat(preds, gts, num_cls)
     acc = torch.sum(torch.diag(confmat)) / torch.sum(confmat)
-    acc_cls, iu = 0.0, 0.0
+    acc_cls, iu = [], []
     for i in range(num_cls):
         correct = torch.diag(confmat)[i]
         sum_pred = torch.sum(confmat, dim=1)[i]
         sum_gt = torch.sum(confmat, dim=0)[i]
         sum_ = sum_pred + sum_gt
         if sum_pred != 0:
-            acc_cls += correct / sum_pred
+            acc_cls.append(correct / sum_pred)
         if sum_ != 0:
-            iu += correct / (sum_ - correct)
-    acc_cls = torch.mean(acc_cls)
-    mean_iu = torch.mean(iu)
+            iu.append(correct / (sum_ - correct))
+    acc_cls = torch.mean(torch.tensor(acc_cls))
+    mean_iu = torch.mean(torch.tensor(iu))
 
     return acc.item(), acc_cls.item(), mean_iu.item()
 
