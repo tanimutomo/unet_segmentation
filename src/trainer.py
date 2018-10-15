@@ -64,13 +64,6 @@ class Trainer(object):
             self.optim.zero_grad()
             outputs = self.model(inputs)
 
-            # experiment for calcurate accuracy and visualize outputs
-            # print(targets.shape, type(targets), targets.dtype)
-            # out = outputs.clone().detach().cpu()
-            # print(out.shape, type(out), out.dtype)
-            # print(torch.min(out))
-            # print(torch.max(out))
-
             targets = F.upsample(torch.unsqueeze(targets, 0), outputs.size()[2:], mode='nearest')
             targets = torch.squeeze(targets, 0).to(torch.int64)
             # print(output.shape, output.dtype)
@@ -83,14 +76,14 @@ class Trainer(object):
             if epoch == 0 and i == 1:
                 print('training is starting on {}'.format(self.device))
 
-            return train_loss
+        return train_loss
 
 
     def validate(self, epoch):
         self.model.eval()
 
         val_loss = AverageMeter()
-        inputs_all, gts_all, predictions_all = [], [], []
+        # inputs_all, gts_all, predictions_all = [], [], []
 
         for i, (inputs, gts) in enumerate(self.val_loader):
             N = inputs.size(0)

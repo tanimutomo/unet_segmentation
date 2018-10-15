@@ -38,7 +38,7 @@ params = {
         'init_size': (256, 256),
         'bn': True,
         'visualize': True,
-        'save_name': 3,
+        'save_name': 100,
         'num_classes': 21,
         'cml': False
         }

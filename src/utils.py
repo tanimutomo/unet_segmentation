@@ -42,19 +42,16 @@ class DeNormalize(object):
 def make_confmat(preds, gts, num_cls):
     preds_flat = torch.flatten(preds)
     gts_flat = torch.flatten(gts)
-    print(preds_flat.shape, gts_flat.shape)
     mask = (gts_flat >= 0) & (gts_flat < num_cls)
-    print(mask.shape)
     confmat = torch.bincount(num_cls * gts_flat[mask] + preds_flat[mask], minlength=num_cls ** 2)
     confmat = confmat.reshape(num_cls, num_cls)
-    return confmat
+    return confmat.float()
 
 
 def evaluate(preds, gts, num_cls):
     confmat = make_confmat(preds, gts, num_cls)
-    print(torch.diag(confmat))
     acc = torch.sum(torch.diag(confmat)) / torch.sum(confmat)
-    acc_cls, iu = 0, 0
+    acc_cls, iu = 0.0, 0.0
     for i in range(num_cls):
         correct = torch.diag(confmat)[i]
         sum_pred = torch.sum(confmat, dim=1)[i]
@@ -64,8 +61,8 @@ def evaluate(preds, gts, num_cls):
             acc_cls += correct / sum_pred
         if sum_ != 0:
             iu += correct / (sum_ - correct)
-    acc_cls = torch.mean(acc_cls.float())
-    mean_iu = torch.mean(iu.float())
+    acc_cls = torch.mean(acc_cls)
+    mean_iu = torch.mean(iu)
 
     return acc.item(), acc_cls.item(), mean_iu.item()
 
