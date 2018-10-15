@@ -31,14 +31,14 @@ from src.utils import *
 
 
 params = {
-        'epochs': 1000,
+        'epochs': 3000,
         'bs': 4,
         'lr': 1e-3,
         'momentum': 0.9,
         'init_size': (256, 256),
         'bn': True,
         'visualize': True,
-        'save_name': 100,
+        'save_name': 3,
         'num_classes': 21,
         'cml': True
         }
