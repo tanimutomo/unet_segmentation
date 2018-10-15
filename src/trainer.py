@@ -48,6 +48,8 @@ class Trainer(object):
                     # 'fwavacc': fwavacc
                     }
 
+            print(metrics)
+
             if self.experiment is not None:
                 self.experiment.log_multiple_metrics(metrics, step=epoch)
 
