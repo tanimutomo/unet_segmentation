@@ -41,10 +41,10 @@ class Trainer(object):
 
             metrics = {
                     'train_loss': train_loss.avg,
-                    'val_loss': val_loss.avg
-                    # 'accuracy': acc,
-                    # 'accuracy_class': acc_cls,
-                    # 'mean_iu': mean_iu,
+                    'val_loss': val_loss.avg,
+                    'accuracy': acc,
+                    'accuracy_class': acc_cls,
+                    'mean_iu': mean_iu
                     # 'fwavacc': fwavacc
                     }
 
@@ -98,28 +98,13 @@ class Trainer(object):
             gts = gts.to(self.device, dtype=torch.float32)
 
             outputs = self.model(inputs)
-            # predictions = outputs[0].data.max(1)[1].squeeze_(1).squeeze_(0).cpu().numpy()
-            # print(predictions.shape, gts.shape)
-            # print(torch.min(gts))
-            # print(torch.max(torch.where(gts>=255, torch.zeros(gts.shape), gts)))
-
+            preds = torch.argmax(outputs, dim=1)
             gts = F.upsample(torch.unsqueeze(gts, 0), outputs.size()[2:], mode='nearest')
             gts = torch.squeeze(gts, 0).to(torch.int64)
             val_loss.update(self.criterion(outputs, gts).item(), N)
+            acc, acc_cls, mean_iu = evaluate(preds, gts, self.num_classes)
 
-            # if random.random() > 0.1:
-            #     inputs_all.append(None)
-            # else:
-            #     inputs_all.append(inputs[0].data.squeeze_(0).cpu())
-            # inputs_all.append(inputs[0].data.squeeze_(0).cpu())
-            # gts_all.append(gts[0].data.squeeze_(0).cpu().numpy())
-            # predictions_all.append(predictions)
-
-            # print(inputs_all[0].shape, inputs_all[0].dtype)
-            # print(gts_all[0].shape, gts_all[0].dtype)
-            # print(predictions_all[0].shape, predictions_all[0].dtype)
-
-        # acc, acc_cls, mean_iu, fwavacc = evaluate(predictions_all, gts_all, self.num_classes)
+        return val_loss, acc, acc_cls, mean_iu
 
         # if self.visualize and epoch % 20 == 0:
         #     val_visual = []
@@ -140,12 +125,11 @@ class Trainer(object):
         #     val_visual.save('./image/{}/sum_e_{}.png'.format(self.save_name, epoch))
 
         # return val_loss, acc, acc_cls, mean_iu, fwavacc
-        return val_loss
 
 
     def report(self, metrics, epoch):
-        # print('[epoch %d], [train loss %.5f], [val loss %.5f], [acc %.5f], [acc_cls %.5f], [mean_iu %.5f], [fwavacc %.5f]' % (
-        #     epoch, i + 1, metrics[0], metrics[1], metrics[2], metrics[3], metrics[4], metrics[5]))
+        print('[epoch %d], [train loss %.5f], [val loss %.5f], [acc %.5f], [acc_cls %.5f], [mean_iu %.5f]' % (
+            epoch, metrics['train_loss'], metrics['val_loss'], metrics['acc'], metrics['acc_cls'], metrics['mean_iu']))
         print('[epoch %d]\t[train loss %.5f]\t[val loss %.5f]' % (epoch, metrics['train_loss'], metrics['val_loss']))
 
         if epoch % 20 == 0 and epoch == (self.epochs - 1):

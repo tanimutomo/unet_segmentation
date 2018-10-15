@@ -39,27 +39,32 @@ class DeNormalize(object):
             t.mul_(s).add_(m)
         return tensor
 
-def _fast_hist(label_pred, label_true, num_classes):
-    mask = (label_true >= 0) & (label_true < num_classes)
-    hist = np.bincount(
-        num_classes * label_true[mask].astype(int) +
-        label_pred[mask], minlength=num_classes ** 2).reshape(num_classes, num_classes)
-    return hist
+def make_confmat(preds, gts, num_cls):
+    preds_flat = torch.flatten(preds)
+    gts_flat = torch.flatten(gts)
+    mask = (gts_flat >= 0) & (gts_flat < num_cls)
+    confmat = torch.bincount(num_cls * gts_flat[mask] + preds_flat[mask], minlength=num_cls ** 2)
+    confmat = confmat.reshape(num_cls, num_cls)
+    return confmat
 
 
-def evaluate(predictions, gts, num_classes):
-    hist = np.zeros((num_classes, num_classes))
-    for lp, lt in zip(predictions, gts):
-        hist += _fast_hist(lp.flatten(), lt.flatten(), num_classes)
-    # axis 0: gt, axis 1: prediction
-    acc = np.diag(hist).sum() / hist.sum()
-    acc_cls = np.diag(hist) / hist.sum(axis=1)
-    acc_cls = np.nanmean(acc_cls)
-    iu = np.diag(hist) / (hist.sum(axis=1) + hist.sum(axis=0) - np.diag(hist))
-    mean_iu = np.nanmean(iu)
-    freq = hist.sum(axis=1) / hist.sum()
-    fwavacc = (freq[freq > 0] * iu[freq > 0]).sum()
-    return acc, acc_cls, mean_iu, fwavacc
+def evaluate(preds, gts, num_cls):
+    confmat = make_confmat(preds, gts, num_cls)
+    acc = torch.diag(confmat).sum() / torch.sum(confmat)
+    acc_cls, iu = 0, 0
+    for i in range(num_cls):
+        correct = torch.diag(confmat)[i]
+        sum_pred = torch.sum(confmat, dim=1)[i]
+        sum_gt = torch.sum(confmat, dim=0)[i]
+        sum_ = sum_pred + sum_gt
+        if sum_pred != 0:
+            acc_cls += correct / sum_pred
+        if sum_ != 0:
+            iu += correct / (sum_ - correct)
+    acc_cls = torch.mean(acc_cls.float())
+    mean_iu = torch.mean(iu.float())
+
+    return acc, acc_cls, mean_iu
 
 
 class AverageMeter:
