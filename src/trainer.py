@@ -94,9 +94,9 @@ class Trainer(object):
         self.model.eval()
 
         val_loss = AverageMeter()
-        acc = AverageMeter()
-        acc_cls = AverageMeter()
-        mean_iu = AverageMeter()
+        val_acc = AverageMeter()
+        val_acc_cls = AverageMeter()
+        val_mean_iu = AverageMeter()
         # inputs_all, gts_all, predictions_all = [], [], []
 
         for i, (inputs, gts) in enumerate(self.val_loader):
