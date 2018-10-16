@@ -57,7 +57,7 @@ def evaluate(preds, gts, num_cls):
         sum_pred = torch.sum(confmat, dim=1)[i]
         sum_gt = torch.sum(confmat, dim=0)[i]
         sum_ = sum_pred + sum_gt
-        if sum_pred != 0:
+        if sum_pred != 0 and sum_gt != 0:
             acc_cls.append(correct / sum_pred)
         if sum_ != 0:
             iu.append(correct / (sum_ - correct))

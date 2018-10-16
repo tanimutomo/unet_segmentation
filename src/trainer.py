@@ -83,6 +83,7 @@ class Trainer(object):
             train_acc.update(train_metric[0])
             train_acc_cls.update(train_metric[1])
             train_mean_iu.update(train_metric[2])
+            print(train_metric)
 
             if epoch == 0 and i == 1:
                 print('iteration is started on {}'.format(self.device))
