@@ -33,12 +33,12 @@ from src.utils import *
 params = {
         'epochs': 300,
         'bs': 4,
-        'lr': 1e-3,
+        'lr': 1e-4,
         'momentum': 0.9,
         'init_size': (256, 256),
         'bn': True,
         'visualize': True,
-        'save_name': 100,
+        'save_name': 5,
         'num_classes': 21,
         'cml': False
         }

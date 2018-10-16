@@ -28,7 +28,7 @@ class UNet(nn.Module):
         out = self.decode3(out, skip2)
         out = self.decode4(out, skip1)
         out = self.conv(out)
-        # print('out: {}'.format(out.shape))
+        out = F.upsample(out, input.size()[2:], mode='bilinear')
         
         return out
 

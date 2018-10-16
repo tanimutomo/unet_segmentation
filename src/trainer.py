@@ -35,16 +35,19 @@ class Trainer(object):
     def iteration(self):
         self.model.apply(init_weights)
         for epoch in range(self.epochs):
-            train_loss = self.train(epoch)
+            train_loss, trian_acc, train_acc_cls, train_mean_iu = self.train(epoch)
             # val_loss, acc, acc_cls, mean_iu, fwavacc = self.validate(epoch)
-            val_loss, acc, acc_cls, mean_iu = self.validate(epoch)
+            val_loss, val_acc, val_acc_cls, val_mean_iu = self.validate(epoch)
 
             metrics = {
                     'train_loss': train_loss.avg,
+                    'train_cc': train_acc.avg,
+                    'train_acc_cls': train_acc_cls.avg,
+                    'train_mean_iu': train_mean_iu.avg,
                     'val_loss': val_loss.avg,
-                    'acc': acc.avg,
-                    'acc_cls': acc_cls.avg,
-                    'mean_iu': mean_iu.avg
+                    'val_cc': val_acc.avg,
+                    'val_acc_cls': val_acc_cls.avg,
+                    'val_mean_iu': val_mean_iu.avg
                     # 'fwavacc': fwavacc
                     }
 
@@ -57,26 +60,34 @@ class Trainer(object):
         self.model.train()
 
         train_loss = AverageMeter()
+        train_acc = AverageMeter()
+        train_acc_cls = AverageMeter()
+        train_mean_iu = AverageMeter()
 
         for i, (inputs, targets) in enumerate(self.train_loader):
             inputs = inputs.to(self.device)
-            targets = targets.to(self.device, dtype=torch.float32)
+            targets = targets.to(self.device)
+            # targets = targets.to(self.device, dtype=torch.float32)
             self.optim.zero_grad()
             outputs = self.model(inputs)
+            preds = torch.argmax(outputs, dim=1)
 
-            targets = F.upsample(torch.unsqueeze(targets, 0), outputs.size()[2:], mode='nearest')
-            targets = torch.squeeze(targets, 0).to(torch.int64)
-            # print(output.shape, output.dtype)
+            # targets = F.upsample(torch.unsqueeze(targets, 0), outputs.size()[2:], mode='nearest')
+            # targets = torch.squeeze(targets, 0).to(torch.int64)
             loss = self.criterion(outputs, targets)
             loss.backward()
             self.optim.step()
 
             train_loss.update(loss.item(), inputs.size(0))
+            train_metric = evaluate(preds.detach(), targets.detach(), self.num_classes)
+            train_acc.update(train_metric[0])
+            train_acc_cls.update(train_metric[1])
+            train_mean_iu.update(train_metric[2])
 
             if epoch == 0 and i == 1:
-                print('training is starting on {}'.format(self.device))
+                print('iteration is started on {}'.format(self.device))
 
-        return train_loss
+        return train_loss, train_acc, train_acc_cls, trian_mean_iu
 
 
     def validate(self, epoch):
@@ -91,19 +102,20 @@ class Trainer(object):
         for i, (inputs, gts) in enumerate(self.val_loader):
             N = inputs.size(0)
             inputs = inputs.to(self.device)
-            gts = gts.to(self.device, dtype=torch.float32)
+            gts = gts.to(self.device)
+            # gts = gts.to(self.device, dtype=torch.float32)
 
             outputs = self.model(inputs)
             preds = torch.argmax(outputs, dim=1)
-            gts = F.upsample(torch.unsqueeze(gts, 0), outputs.size()[2:], mode='nearest')
-            gts = torch.squeeze(gts, 0).to(torch.int64)
+            # gts = F.upsample(torch.unsqueeze(gts, 0), outputs.size()[2:], mode='nearest')
+            # gts = torch.squeeze(gts, 0).to(torch.int64)
             val_loss.update(self.criterion(outputs, gts).item(), N)
-            evaluation = evaluate(preds.detach(), gts.detach(), self.num_classes)
-            acc.update(evaluation[0])
-            acc_cls.update(evaluation[1])
-            mean_iu.update(evaluation[2])
+            val_metric = evaluate(preds.detach(), gts.detach(), self.num_classes)
+            val_acc.update(val_metric[0])
+            val_acc_cls.update(val_metric[1])
+            val_mean_iu.update(val_metric[2])
 
-        return val_loss, acc, acc_cls, mean_iu
+        return val_loss, val_acc, val_acc_cls, val_mean_iu
 
         # if self.visualize and epoch % 20 == 0:
         #     val_visual = []
@@ -127,8 +139,10 @@ class Trainer(object):
 
 
     def report(self, metrics, epoch):
-        print('[epoch %d], [train loss %.5f], [val loss %.5f], [acc %.5f], [acc_cls %.5f], [mean_iu %.5f]' % (
-            epoch, metrics['train_loss'], metrics['val_loss'], metrics['acc'], metrics['acc_cls'], metrics['mean_iu']))
+        print('Train: [epoch %d], [loss %.5f], [acc %.5f], [acc_cls %.5f], [mean_iu %.5f]' % (
+            epoch, metrics['train_loss'], metrics['train_acc'], metrics['train_acc_cls'], metrics['train_mean_iu']))
+        print('Val  : [epoch %d], [loss %.5f], [acc %.5f], [acc_cls %.5f], [mean_iu %.5f]' % (
+            epoch, metrics['val_loss'], metrics['val_acc'], metrics['val_acc_cls'], metrics['val_mean_iu']))
         # print('[epoch %d]\t[train loss %.5f]\t[val loss %.5f]' % (epoch, metrics['train_loss'], metrics['val_loss']))
 
         if epoch % 20 == 0 or epoch == (self.epochs - 1):
