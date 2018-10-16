@@ -35,7 +35,7 @@ class Trainer(object):
     def iteration(self):
         self.model.apply(init_weights)
         for epoch in range(self.epochs):
-            train_loss, trian_acc, train_acc_cls, train_mean_iu = self.train(epoch)
+            train_loss, train_acc, train_acc_cls, train_mean_iu = self.train(epoch)
             # val_loss, acc, acc_cls, mean_iu, fwavacc = self.validate(epoch)
             val_loss, val_acc, val_acc_cls, val_mean_iu = self.validate(epoch)
 
@@ -87,7 +87,7 @@ class Trainer(object):
             if epoch == 0 and i == 1:
                 print('iteration is started on {}'.format(self.device))
 
-        return train_loss, train_acc, train_acc_cls, trian_mean_iu
+        return train_loss, train_acc, train_acc_cls, train_mean_iu
 
 
     def validate(self, epoch):
