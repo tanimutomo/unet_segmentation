@@ -45,7 +45,7 @@ class Trainer(object):
                     'train_acc_cls': train_acc_cls.avg,
                     'train_mean_iu': train_mean_iu.avg,
                     'val_loss': val_loss.avg,
-                    'val_cc': val_acc.avg,
+                    'val_acc': val_acc.avg,
                     'val_acc_cls': val_acc_cls.avg,
                     'val_mean_iu': val_mean_iu.avg
                     # 'fwavacc': fwavacc
