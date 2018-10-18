@@ -13,7 +13,6 @@ from torch.utils.data import DataLoader
 
 from src.model import UNet
 from src.utils import init_weights, evaluate, AverageMeter, colorize_mask, DeNormalize
-from src.loader import visualize, restore_transform
 
 
 
@@ -29,7 +28,6 @@ class Trainer(object):
         self.epochs = params['epochs']
         self.save_name = params['save_name']
         self.num_classes = params['num_classes']
-        self.visualize = params['visualize']
         self.experiment = experiment
 
     def iteration(self):
@@ -116,26 +114,6 @@ class Trainer(object):
             val_mean_iu.update(val_metric[2])
 
         return val_loss, val_acc, val_acc_cls, val_mean_iu
-
-        # if self.visualize and epoch % 20 == 0:
-        #     val_visual = []
-        #     for i, data in enumerate(zip(inputs_all, gts_all, predictions_all)):
-        #         if data[0] is None:
-        #             continue
-        #         input_pil = restore_transform(data[0].detach())
-        #         gt_pil = colorize_mask(data[1])
-        #         predictions_pil = colorize_mask(data[2])
-
-        #         input_pil.save('./image/{}/e_{}/{}_input.png'.format(self.save_name, epoch, i))
-        #         predictions_pil.save('./image/{}/e_{}/{}_prediction.png'.format(self.save_name, epoch, i))
-        #         gt_pil.save('./image/{}/e_{}/{}_gt.png'.format(self.save_name, epoch, i))
-        #         val_visual.extend([visualize(input_pil.convert('RGB')), visualize(gt_pil.convert('RGB')),
-        #                            visualize(predictions_pil.convert('RGB'))])
-        #     val_visual = torch.stack(val_visual, 0)
-        #     val_visual = vutils.make_grid(val_visual, nrow=3, padding=5)
-        #     val_visual.save('./image/{}/sum_e_{}.png'.format(self.save_name, epoch))
-
-        # return val_loss, acc, acc_cls, mean_iu, fwavacc
 
 
     def report(self, metrics, epoch):

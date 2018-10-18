@@ -58,7 +58,7 @@ def make_dataset(mode, root):
 
 
 class VOC(data.Dataset):
-    def __init__(self, mode, root, init_size, joint_transform=None, sliding_crop=None, transform=None, target_transform=None):
+    def __init__(self, mode, root, init_size, joint_transform=None, sliding_crop=None, transform=None, target_transform=None, augmentation=None):
         self.imgs = make_dataset(mode, root)
         if len(self.imgs) == 0:
             raise RuntimeError('Found 0 images, please check the data set')
@@ -68,14 +68,9 @@ class VOC(data.Dataset):
         self.sliding_crop = sliding_crop
         self.transform = transform
         self.target_transform = target_transform
+        self.data_aug = augmentation
 
     def __getitem__(self, index):
-        if self.mode == 'test':
-            img_path, img_name = self.imgs[index]
-            img = Image.open(os.path.join(img_path, img_name + '.jpg')).convert('RGB')
-            if self.transform is not None:
-                img = self.transform(img)
-            return img_name, img
 
         img_path, mask_path = self.imgs[index]
         img = Image.open(img_path).convert('RGB')
@@ -90,23 +85,30 @@ class VOC(data.Dataset):
         img = img.resize((self.init_size), Image.ANTIALIAS)
         mask = mask.resize((self.init_size)) # default is NEAREST
 
-        if self.joint_transform is not None:
-            img, mask = self.joint_transform(img, mask)
+        img = self.transform(img)
+        mask = self.target_transform(mask)
 
-        if self.sliding_crop is not None:
-            img_slices, mask_slices, slices_info = self.sliding_crop(img, mask)
-            if self.transform is not None:
-                img_slices = [self.transform(e) for e in img_slices]
-            if self.target_transform is not None:
-                mask_slices = [self.target_transform(e) for e in mask_slices]
-            img, mask = torch.stack(img_slices, 0), torch.stack(mask_slices, 0)
-            return img, mask, torch.LongTensor(slices_info)
-        else:
-            if self.transform is not None:
-                img = self.transform(img)
-            if self.target_transform is not None:
-                mask = self.target_transform(mask)
-            return img, mask
+        return img, mask
+
+        # if self.mode == 'test':
+        #     img_path, img_name = self.imgs[index]
+        #     img = Image.open(os.path.join(img_path, img_name + '.jpg')).convert('RGB')
+        #     if self.transform is not None:
+        #         img = self.transform(img)
+        #     return img_name, img
+
+        # if self.joint_transform is not None:
+        #     img, mask = self.joint_transform(img, mask)
+          
+        # if self.sliding_crop is not None:
+        #     img_slices, mask_slices, slices_info = self.sliding_crop(img, mask)
+        #     if self.transform is not None:
+        #         img_slices = [self.transform(e) for e in img_slices]
+        #     if self.target_transform is not None:
+        #         mask_slices = [self.target_transform(e) for e in mask_slices]
+        #     img, mask = torch.stack(img_slices, 0), torch.stack(mask_slices, 0)
+        #     return img, mask, torch.LongTensor(slices_info)
+        # else:
 
     def __len__(self):
         return len(self.imgs)

@@ -59,10 +59,8 @@ criterion = nn.CrossEntropyLoss(ignore_index=255)
 optim = optim.SGD(model.parameters(), lr=params['lr'], momentum=params['momentum'])
 train_loader, val_loader = get_loader(data_root, params['bs'], params['init_size'])
 
-# if os.path.exists('./model') == 0:
-#     os.mkdir('./model')
-# if os.path.exists('./image') == 0:
-#     os.mkdir('./image')
+if os.path.exists('./model') == 0:
+    os.mkdir('./model')
 
 trainer = Trainer(device, model, criterion, optim, train_loader, val_loader, params, experiment)
 trainer.iteration()
