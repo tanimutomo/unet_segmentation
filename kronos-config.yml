@@ -1,7 +1,7 @@
 docker_path: 'docker'
 
 # kronos path (you can check by typing 'which kronos' in remote server)
-kronos_path: '/home/tanimu/.pyenv/versions/miniconda3-4.3.30/bin'
+# kronos_path: '/home/tanimu/.pyenv/versions/miniconda3-4.3.30/bin'
 
 # Number of GPUs to use
 num_use_gpu: 1
