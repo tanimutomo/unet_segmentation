@@ -58,7 +58,7 @@ class Trainer(object):
 
     def train(self, epoch):
         self.model.train()
-        print(next(model.parameters()).is_cuda)
+        print(next(self.model.parameters()).is_cuda)
 
         train_loss = AverageMeter()
         train_acc = AverageMeter()
