@@ -1,4 +1,4 @@
-docker_path: './docker'
+docker_path: 'docker'
 
 # kronos path (you can check by typing 'which kronos' in remote server)
 kronos_path: '/home/tanimu/.pyenv/versions/miniconda3-4.3.30/bin'
