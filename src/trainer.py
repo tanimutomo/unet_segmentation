@@ -69,6 +69,7 @@ class Trainer(object):
             inputs = inputs.to(self.device)
             targets = targets.to(self.device)
             # targets = targets.to(self.device, dtype=torch.float32)
+            print(next(inputs).is_cuda)
             self.optim.zero_grad()
             outputs = self.model(inputs)
             preds = torch.argmax(outputs, dim=1)
