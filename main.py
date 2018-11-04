@@ -1,6 +1,11 @@
 #!/Users/tanimu/.pyenv/shims/python
 # encoding=utf8
 
+import os
+import argparse
+import numpy as np
+from comet_ml import Experiment
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -9,11 +14,6 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as standard_transforms
 import torchvision.utils as vutils
 import torchvision.transforms.functional as F
-
-import os
-import argparse
-import numpy as np
-from comet_ml import Experiment
 
 from src.dataset import VOC
 from src.loader import get_loader
