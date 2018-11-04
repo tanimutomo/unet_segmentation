@@ -66,7 +66,7 @@ class Trainer(object):
         for i, (inputs, targets) in enumerate(self.train_loader):
             inputs = inputs.to(self.device)
             targets = targets.to(self.device)
-            print(type(intpus))
+            print(type(intputs))
             # targets = targets.to(self.device, dtype=torch.float32)
             self.optim.zero_grad()
             outputs = self.model(inputs)
