@@ -22,25 +22,17 @@ from src.model import UNet
 from src.utils import *
 
 
-# parser = argparse.ArgumentParser(description='Params')
-# parser.add_argument('--cml', action='store_true')
-# parser.add_argument('--epochs', type=int, default=1000)
-# parser.add_argument('--lr', type=float, default=1e-3)
-# parser.add_argument('--save_name', type=int, default=100)
-# args = parser.parse_args()
-
-
 params = {
-        'epochs': 1,
+        'epochs': 10,
         'bs': 4,
         'lr': 1e-4,
         'momentum': 0.95,
         'init_size': (256, 256),
         'bn': True,
         'visualize': True,
-        'save_name': 100,
+        'save_name': 11,
         'num_classes': 21,
-        'cml': False
+        'cml': True
         }
 
 if params['cml']:
