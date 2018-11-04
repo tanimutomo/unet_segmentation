@@ -17,4 +17,5 @@ RUN ${PIP} install --upgrade \
 WORKDIR /app
 ADD . /app
 
+
 RUN ${PIP} install --trusted-host pypi.python.org -r cpu_requirements.txt

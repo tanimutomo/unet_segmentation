@@ -1,6 +1,0 @@
-torch
-torchvision
-numpy
-pillow
-scikit-image
-comet_ml
