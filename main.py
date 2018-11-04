@@ -45,7 +45,7 @@ if params['cml']:
     experiment.log_multiple_params(params)
 
 data_root = './data/VOC'
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = UNet(params['bn'])
 criterion = nn.CrossEntropyLoss(ignore_index=255)
 optim = optim.SGD(model.parameters(), lr=params['lr'], momentum=params['momentum'])
