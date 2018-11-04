@@ -20,6 +20,7 @@ class Trainer(object):
 
     def __init__(self, device, model, criterion, optim, train_loader, val_loader, params, experiment=None):
         self.device = device
+        print(self.device)
         self.model = model
         self.criterion = criterion
         self.optim = optim
@@ -32,7 +33,7 @@ class Trainer(object):
 
     def iteration(self):
         self.model.apply(init_weights)
-        self.model.to(self.device)
+        self.model = self.model.to(self.device)
         for epoch in range(self.epochs):
             train_loss, train_acc, train_acc_cls, train_mean_iu = self.train(epoch)
             # val_loss, acc, acc_cls, mean_iu, fwavacc = self.validate(epoch)
@@ -70,6 +71,7 @@ class Trainer(object):
             # targets = targets.to(self.device, dtype=torch.float32)
             self.optim.zero_grad()
             outputs = self.model(inputs)
+            print(type(outputs))
             preds = torch.argmax(outputs, dim=1)
 
             # targets = F.upsample(torch.unsqueeze(targets, 0), outputs.size()[2:], mode='nearest')
