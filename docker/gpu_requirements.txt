@@ -1,1 +1,6 @@
-tensorflow-gpu
+torch
+torchvision
+numpy
+scikit-image
+pillow
+comet_ml
