@@ -31,8 +31,8 @@ class Trainer(object):
         self.experiment = experiment
 
     def iteration(self):
+        self.model.apply(init_weights)
         self.model.to(self.device)
-        self.model.apply(init_weights.to(self.device))
         for epoch in range(self.epochs):
             train_loss, train_acc, train_acc_cls, train_mean_iu = self.train(epoch)
             # val_loss, acc, acc_cls, mean_iu, fwavacc = self.validate(epoch)
