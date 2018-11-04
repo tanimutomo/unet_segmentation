@@ -67,11 +67,9 @@ class Trainer(object):
         for i, (inputs, targets) in enumerate(self.train_loader):
             inputs = inputs.to(self.device)
             targets = targets.to(self.device)
-            print(type(inputs))
             # targets = targets.to(self.device, dtype=torch.float32)
             self.optim.zero_grad()
             outputs = self.model(inputs)
-            print(type(outputs))
             preds = torch.argmax(outputs, dim=1)
 
             # targets = F.upsample(torch.unsqueeze(targets, 0), outputs.size()[2:], mode='nearest')
