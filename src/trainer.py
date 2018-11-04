@@ -32,7 +32,7 @@ class Trainer(object):
         self.experiment = experiment
 
     def iteration(self):
-        # self.model.apply(init_weights)
+        self.model.apply(init_weights)
         self.model = self.model.to(self.device)
         for epoch in range(self.epochs):
             train_loss, train_acc, train_acc_cls, train_mean_iu = self.train(epoch)
@@ -58,6 +58,7 @@ class Trainer(object):
 
     def train(self, epoch):
         self.model.train()
+        print(next(model.parameters()).is_cuda)
 
         train_loss = AverageMeter()
         train_acc = AverageMeter()
