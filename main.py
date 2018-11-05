@@ -23,7 +23,7 @@ from src.utils import *
 
 
 params = {
-        'epochs': 1,
+        'epochs': 10,
         'bs': 4,
         'lr': 1e-4,
         'momentum': 0.95,
@@ -32,7 +32,7 @@ params = {
         'visualize': True,
         'save_name': 100,
         'num_classes': 21,
-        'cml': False
+        'cml': True
         }
 
 if params['cml']:
