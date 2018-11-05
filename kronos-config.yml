@@ -8,7 +8,7 @@ git_url: 'https://github.com/tanimutomo/U-Net.git'
 git_branch: 'master'
 
 # project directory path
-pj_root: '/home/tanimu/Project/kronos'
+pj_root: '/home/tanimu/kronos-demo'
 
 # The path of the project's data directory
 data_dir: 'data'
