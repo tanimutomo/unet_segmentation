@@ -58,7 +58,6 @@ class Trainer(object):
 
     def train(self, epoch):
         self.model.train()
-        print(next(self.model.parameters()).is_cuda)
 
         train_loss = AverageMeter()
         train_acc = AverageMeter()
@@ -69,7 +68,6 @@ class Trainer(object):
             inputs = inputs.to(self.device)
             targets = targets.to(self.device)
             # targets = targets.to(self.device, dtype=torch.float32)
-            print(inputs.is_cuda)
             self.optim.zero_grad()
             outputs = self.model(inputs)
             preds = torch.argmax(outputs, dim=1)
